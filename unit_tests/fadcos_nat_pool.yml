@@ -1,0 +1,67 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Add nat pool
+      fadcos_nat_pool:
+        action: add
+        name: natpool
+        interface: port1
+        iptype: ipv4
+        ipstart: 192.168.2.101
+        ipend: 192.168.2.109
+    - name: Add duplcated nat pool  
+      fadcos_nat_pool:
+        action: add
+        name: natpool
+        interface: port1
+        iptype: ipv4
+        ipstart: 172.19.162.22
+        ipend: 172.19.162.29
+    - name: Add another nat pool  
+      fadcos_nat_pool:
+        action: add
+        name: natpool2
+        interface: port2
+        iptype: ipv4
+        ipstart: 3.3.3.3
+        ipend: 3.3.3.10
+    - name: Edit nat pool  
+      fadcos_nat_pool:
+        action: edit
+        name: natpool2
+        interface: port3
+        iptype: ipv4
+        ipstart: 3.3.3.100
+        ipend: 3.3.3.108
+    - name: Check natpool
+      fadcos_nat_pool:
+        action: get
+        name: natpool
+    - name: Check natpool2
+      fadcos_nat_pool:
+        action: get
+        name: natpool2
+    # - name: delete nat pool
+    #   fadcos_nat_pool:
+    #     action: delete
+    #     name: natpool2
+    # - name: delete nat pool
+    #   fadcos_nat_pool:
+    #     action: delete
+    #     name: natpool
+    - name: Check nat pool after delete
+      fadcos_nat_pool:
+        action: get
+        name: natpool
+    - name: Check nat pool after delete
+      fadcos_nat_pool:
+        action: get
+        name: natpool2
+    - name: Check nat pool which does not exist
+      fadcos_nat_pool:
+        action: get
+        name: natpool2

@@ -1,0 +1,59 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: add an admin as a test subject
+      fadcos_admin:
+       action: add
+       name: test1
+       password: a12345
+       global_admin: false
+    - name: test the admin additon
+      fadcos_admin:
+       action: get
+       name: test1
+    - name: add a duplicated admin to test idempotency
+      fadcos_admin:
+       action: add
+       name: test1
+       password: abc789
+       oldpassword: a12345
+       global_admin: true
+    - name: test the admin additon again
+      fadcos_admin:
+       action: get
+       name: test1
+    - name: edit admin
+      fadcos_admin:
+       action: edit
+       name: test1
+       vdom: ['root']
+       password: qwerty
+       oldpassword: abc789
+       global_admin: false
+    - name: delete admin
+      fadcos_admin:
+       action: delete
+       name: test1
+       password: qwerty
+    - name: test the admin deletetion
+      fadcos_admin:
+       action: get
+       name: test1
+    - name: edit an non-exist entry
+      fadcos_admin:
+       action: edit
+       name: test1
+       vdom: ['root']
+       password: qwerty
+    - name: delete the admin again to test idempotency
+      fadcos_admin:
+       action: delete
+       name: test1
+       password: qwerty
+
+      # if need change pwd and user is not global admin oldpassword need to set
+      #  oldpassword: a1234

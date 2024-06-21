@@ -1,0 +1,63 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Delete a real server pool to prepare the test subject
+      fadcos_real_server_pool:
+        action: delete
+        name: rs_pool
+    - name: Delete a real server pool (delete non-exist entry) again to see whether it causes an error
+      fadcos_real_server_pool:
+        action: delete
+        name: rs_pool_tst
+    - name: check an non-existent entry to see whether it causes an error
+      fadcos_real_server_pool:
+        action: get
+        name: rs_pool_tst
+    - name: Create a real server pool as the test subject
+      fadcos_real_server_pool:
+        action: add
+        name: rs_pool_tst
+        iptype: ipv6
+        vdom: root
+        healthcheck: enable
+        health_check_list:
+                - LB_HLTHCK_HTTPS
+    - name: Create an duplicated real server pool
+      fadcos_real_server_pool:
+        action: add
+        name: rs_pool_tst
+        iptype: ipv6
+        vdom: root
+        healthcheck: enable
+        health_check_list:
+                - LB_HLTHCK_ICMP
+    - name: check the real server pool test subject
+      fadcos_real_server_pool:
+        action: get
+        name: rs_pool_tst
+    - name: edit the real server pool
+      fadcos_real_server_pool:
+        action: edit
+        name: rs_pool_tst
+        iptype: ipv6
+        vdom: root
+        healthcheck: enable
+        health_check_list:
+                - LB_HLTHCK_HTTPS
+                - LB_HLTHCK_ICMP  
+    - name: check the real server pool test subject again after edit
+      fadcos_real_server_pool:
+        action: get
+        name: rs_pool_tst
+    - name: Delete a existed server pool
+      fadcos_real_server_pool:
+        action: delete
+        name: rs_pool_tst
+    - name: check whether the entry was deleted
+      fadcos_real_server_pool:
+        action: get
+        name: rs_pool_tst

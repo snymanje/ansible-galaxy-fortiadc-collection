@@ -1,0 +1,52 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: create test
+      fadcos_load_balance_method:
+       action: add
+       name: test
+       type: round-robin
+    
+    - name: create test again
+      fadcos_load_balance_method:
+       action: add
+       name: test2
+       type: uri-hash
+
+    - name: get test 
+      fadcos_load_balance_method:
+       action: get
+
+    - name: create a duplicated entry test
+      fadcos_load_balance_method:
+       action: add
+       name: test
+       type: dest-ip-hash
+
+    - name: get test 
+      fadcos_load_balance_method:
+       action: get
+
+    - name: edit test 
+      fadcos_load_balance_method:
+       action: edit
+       name: test
+       type: host-hash
+      
+    - name: edit non-existent item test
+      fadcos_load_balance_method:
+       action: edit
+       name: test_no_one
+       type: host-hash
+
+    - name: delete test
+      fadcos_load_balance_method:
+        action: remove
+        names:
+            - test
+            - test2
+            - test_no_one_here

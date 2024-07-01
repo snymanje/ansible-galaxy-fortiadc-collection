@@ -1,0 +1,49 @@
+---
+- name:
+  hosts: all
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Delete Real Server SSL Profile for new test
+      fadcos_real_server_ssl_profile:
+        action: delete
+        name: ansible_test_server_ssl
+    - name: Check whether the target Real Server SSL Profile still exists
+      fadcos_real_server_ssl_profile:
+        action: get 
+        name: ansible_test_server_ssl
+    - name: Delete Real Server SSL Profile again to see whether delete non-existent entry causes error
+      fadcos_real_server_ssl_profile:
+        action: delete
+        name: ansible_test_server_ssl
+    - name: Add Real Server SSL Profile as test subject
+      fadcos_real_server_ssl_profile:
+        action: add
+        name: ansible_test_server_ssl
+    - name: Add duplicated Real Server SSL Profile
+      fadcos_real_server_ssl_profile:
+        action: add
+        name: ansible_test_server_ssl
+        renegotiate_size: 1
+    - name: Check the target Real Server SSL Profile
+      fadcos_real_server_ssl_profile:
+        action: get 
+        name: ansible_test_server_ssl
+    - name: Edit test
+      fadcos_real_server_ssl_profile:
+        action: edit 
+        name: ansible_test_server_ssl
+        renegotiate_size: 2
+        server_OCSP_stapling: enable
+    - name: Check the target Real Server SSL Profile
+      fadcos_real_server_ssl_profile:
+        action: get 
+        name: ansible_test_server_ssl
+    - name: Delete Real Server SSL Profile to finish test
+      fadcos_real_server_ssl_profile:
+        action: delete
+        name: ansible_test_server_ssl
+    - name: Check whether the target Real Server SSL Profile still exists
+      fadcos_real_server_ssl_profile:
+        action: get 
+        name: ansible_test_server_ssl

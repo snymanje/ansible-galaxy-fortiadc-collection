@@ -8,6 +8,7 @@
 from __future__ import (absolute_import, division, print_function)
 import os
 import json
+import re
 from ansible_collections.fortinet.fortiadc.plugins.module_utils.network.fadcos.fadcos import fadcos_argument_spec
 from ansible.module_utils.connection import Connection
 from ansible.module_utils.basic import AnsibleModule
@@ -58,6 +59,13 @@ fadcos_backup_config:
 '''/api/system_global/back_config_disk'''
 
 
+def is_valid_name(s):
+    # Regex pattern to match 1 to 32 characters in A-Z, a-z, 0-9, dash (-), and dot (.)
+    pattern = r'^[A-Za-z0-9\-.]{1,32}$'
+    # Check if the string matches the pattern
+    return bool(re.match(pattern, s))
+
+
 def save_config_adc(module, connection):
 
     if module.params['name']:
@@ -88,7 +96,7 @@ def get_config_disk(connection):
 def backup_config(module, connection):
     path = module.params['path']
     pwd = ''
-    if not module.params['password']:
+    if module.params['password']:
         pwd = module.params['password']
 
     url = '/api/downloader/config?entire=enable&type=' + \
@@ -111,13 +119,14 @@ def main():
         password=dict(type='str'),
         name=dict(type='str', default='Ansiblebackup'),
     )
+
     argument_spec.update(fadcos_argument_spec)
     result = {}
     required_if = []
     module = AnsibleModule(argument_spec=argument_spec,
                            required_if=required_if)
     connection = Connection(module._socket_path)
-
+    
     action = module.params['action']
     if action == 'download':
         if os.path.exists(module.params['path']):
@@ -128,8 +137,12 @@ def main():
             result['err'] = err_msg
             result['failed'] = True
     elif action == 'save':
-        code, response = save_config_adc(module, connection)
-        result['res'] = response
+        if 'name' in module.params.keys() and is_valid_name(module.params['name']) == False:
+            result['err_msg'] = 'Invalid name'
+            result['failed'] = True
+        else:
+            code, response = save_config_adc(module, connection)
+            result['res'] = response
     elif action == 'list':
         code, response = get_config_disk(connection)
         result['res'] = response

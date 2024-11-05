@@ -1,0 +1,61 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: add vdom for test
+      fadcos_vdom:
+       action: add
+       name: vd1
+    - name: edit
+      fadcos_system_vdom:
+       action: edit
+       name: vd1
+       l4cps: 1
+       l7cps: 1
+       l7rps: 1
+       sslcps: 1
+       sslthroughput: 1
+       concurrentsession: 1
+       inbound: 1
+       outbound: 1
+       virtual_server: 1
+       real_server: 1
+       health_check: 4
+       source_pool: 1
+       error_page: 1
+       local_user: 1
+       user_group: 1
+    - name: edit a non-exist entry
+      fadcos_system_vdom:
+       action: edit
+       name: vd-not-here
+       l4cps: 1
+       l7cps: 1
+       l7rps: 1
+       sslcps: 1
+       sslthroughput: 1
+       concurrentsession: 1
+       inbound: 1
+       outbound: 1
+       virtual_server: 1
+       real_server: 1
+       health_check: 4
+       source_pool: 1
+       error_page: 1
+       local_user: 1
+       user_group: 1
+    - name: get
+      fadcos_system_vdom:
+       action: get
+       name: vd1
+    - name: get
+      fadcos_system_vdom:
+       action: get
+       name: vd-not-here
+    - name: remove vdom for test
+      fadcos_vdom:
+       action: delete
+       name: vd1

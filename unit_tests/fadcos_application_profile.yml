@@ -1,0 +1,55 @@
+---
+- name:
+  hosts: all
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Add Application Profile
+      fadcos_application_profile:
+        action: add
+        name: ansible_test_10086
+        type: tcp
+        timeout_tcp_session: 90
+        ip_reputation: disable
+
+    - name: Edit Application Profile
+      fadcos_application_profile:
+        action: edit
+        name: ansible_test_10086
+        type: tcp
+        timeout_tcp_session: 110
+        ip_reputation: disable
+
+    - name: check Application Profile
+      fadcos_application_profile:
+        action: get
+        name: ansible_test_10086
+      
+    - name: Add duplicated Application Profile to test idempotency
+      fadcos_application_profile:
+        action: add
+        name: ansible_test_10086
+        type: tcp
+        timeout_tcp_session: 130
+        ip_reputation: disable    
+
+    - name: check Application Profile again
+      fadcos_application_profile:
+        action: get
+        name: ansible_test_10086
+
+    - name: delete Application Profile
+      fadcos_application_profile:
+        action: delete
+        name: ansible_test_10086
+
+    - name: check delete 
+      fadcos_application_profile:
+        action: get
+        name: ansible_test_10086
+
+    - name: delete Application Profile to test idempotency
+      fadcos_application_profile:
+        action: delete
+        name: ansible_test_10086
+

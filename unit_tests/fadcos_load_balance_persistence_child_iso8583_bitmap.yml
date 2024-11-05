@@ -1,0 +1,69 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: add
+      fadcos_load_balance_persistence_child_iso8583_bitmap:
+       action: add
+       name: test16
+       type: 18-merchant-type
+       id: '1'
+
+    - name: add duplicated
+      fadcos_load_balance_persistence_child_iso8583_bitmap:
+       action: add
+       name: test16
+       type: 18-merchant-type
+       id: '1'
+
+    - name: add another 
+      fadcos_load_balance_persistence_child_iso8583_bitmap:
+       action: add
+       name: test16
+       type: 18-merchant-type
+       id: '2'
+
+    - name: edit 2 
+      fadcos_load_balance_persistence_child_iso8583_bitmap:
+       action: add
+       name: test16
+       type: 18-merchant-type
+       id: '2'
+
+    - name: edit non-exist 
+      fadcos_load_balance_persistence_child_iso8583_bitmap:
+       action: edit
+       name: test16
+       type: 18-merchant-type
+       id: '999'
+
+    # - name: edit
+    #   fadcos_load_balance_persistence_child_iso8583_bitmap:
+    #    action: edit
+    #    name: test
+    #    type: 18-merchant-type
+    #    id: '1'
+
+    - name: get
+      fadcos_load_balance_persistence_child_iso8583_bitmap:
+       action: get
+       name: test16
+
+    - name: remove
+      fadcos_load_balance_persistence_child_iso8583_bitmap:
+       action: remove
+       name: test16
+       id_list:
+            - '1'
+            - '2'
+            - '3'
+            - '4'
+            - '5'
+
+    - name: get
+      fadcos_load_balance_persistence_child_iso8583_bitmap:
+       action: get
+       name: test16

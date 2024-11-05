@@ -1,0 +1,84 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create a real server pool as the test subject
+      fadcos_real_server_pool:
+        action: add
+        name: rs_pool
+        iptype: ipv6
+        vdom: root
+        healthcheck: enable
+        health_check_list:
+                - LB_HLTHCK_HTTPS
+    - name: create
+      fadcos_load_balance_content_routing:
+       action: add
+       name: test1
+       type: l4-content-routing
+       ip: 172.23.133.178/24
+       method_inherit: disable
+       method: LB_METHOD_LEAST_CONNECTION
+       persistence_inherit: disable
+       persistence: LB_PERSIS_SRC_ADDR
+       schedule_list: disable
+       pool: rs_pool
+       comments: nothings
+
+    - name: create the duplicated entry
+      fadcos_load_balance_content_routing:
+       action: add
+       name: test1
+       type: l7-content-routing
+       method_inherit: disable
+       method: LB_METHOD_LEAST_CONNECTION
+       persistence_inherit: disable
+       persistence: LB_PERSIS_SRC_ADDR
+       schedule_list: disable
+       pool: rs_pool
+       comments: nothings
+
+    - name: check the add result
+      fadcos_load_balance_content_routing:
+       action: get
+
+    - name: edit test 
+      fadcos_load_balance_content_routing:
+       action: edit
+       name: test1
+       type: l7-content-routing
+       method_inherit: enable
+       persistence_inherit: enable
+       schedule_list: disable
+       pool: rs_pool
+       comments: nothings
+
+    - name: edit non-existent entry 
+      fadcos_load_balance_content_routing:
+       action: edit
+       name: test19999
+       type: l7-content-routing
+       method_inherit: enable
+       persistence_inherit: enable
+       schedule_list: disable
+       pool: rs_pool
+       comments: nothings
+
+    - name: check the edit test
+      fadcos_load_balance_content_routing:
+       action: get
+
+    - name: delete
+      fadcos_load_balance_content_routing:
+       action: remove
+       names:
+            - test1
+            - test_no_exist
+
+    - name: check the delete result
+      fadcos_load_balance_content_routing:
+       action: get
+

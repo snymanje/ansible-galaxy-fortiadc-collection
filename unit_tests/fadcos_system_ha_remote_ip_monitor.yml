@@ -1,0 +1,76 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: delete before test
+      fadcos_system_ha_remote_ip_monitor:
+       action: delete 
+       name: test1
+          
+    - name: Create the test entry
+      fadcos_system_ha_remote_ip_monitor:
+       action: add
+       health_check_interval: 10
+       health_check_timeout: 5
+       health_check_retry: 3
+       remote_address: 192.168.1.100
+       source_port: port1
+       name: test1
+
+    - name: Create a duplicated entry to test idempotency
+      fadcos_system_ha_remote_ip_monitor:
+       action: add
+       health_check_interval: 10
+       health_check_timeout: 5
+       health_check_retry: 3
+       remote_address: 192.168.2.99
+       source_port: port1
+       name: test1
+      
+    - name: Create another test entry
+      fadcos_system_ha_remote_ip_monitor:
+       action: add
+       health_check_interval: 8
+       health_check_timeout: 5
+       health_check_retry: 5
+       remote_address: 172.19.1.6
+       source_port: port2
+       name: test2
+      
+    - name: check entry after add
+      fadcos_system_ha_remote_ip_monitor:
+       action: get 
+       name: test1
+
+    - name: edit
+      fadcos_system_ha_remote_ip_monitor:
+       action: edit 
+       health_check_interval: 10
+       health_check_timeout: 5
+       health_check_retry: 3
+       remote_address: 1.1.1.3
+       source_port: port1
+       name: test1
+
+    - name: check entry after edit
+      fadcos_system_ha_remote_ip_monitor:
+       action: get 
+       name: test1
+
+    - name: delete after test
+      fadcos_system_ha_remote_ip_monitor:
+       action: delete 
+       name: test1
+
+    - name: check whether delete is successful
+      fadcos_system_ha_remote_ip_monitor:
+       action: get 
+       name: test1
+
+    - name: delete again to test idempotency
+      fadcos_system_ha_remote_ip_monitor:
+       action: delete 
+       name: test1

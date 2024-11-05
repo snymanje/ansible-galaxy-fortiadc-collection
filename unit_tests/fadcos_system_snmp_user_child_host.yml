@@ -1,0 +1,61 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: create snmp user
+      fadcos_system_snmp_user:
+       action: add
+       auth_proto: sha1
+       auth_pwd: '123'
+       name: test
+       privacy_proto: aes
+       privacy_pwd: '123'
+       query_port: '161'
+       security_level: authpriv
+       status: enable
+    - name: add
+      fadcos_system_snmp_user_child_host:
+       action: add
+       snmp_name: 'test'
+       ip: '172.23.133.0/24'
+       id: 1
+    - name: add the same entry to test idempotency
+      fadcos_system_snmp_user_child_host:
+       action: add
+       snmp_name: 'test'
+       ip: '192.168.1.0/24'
+       id: 1 
+    - name: check the result of add
+      fadcos_system_snmp_user_child_host:
+       action: get
+       snmp_name: 'test'
+    - name: edit an existed entry
+      fadcos_system_snmp_user_child_host:
+       action: edit
+       snmp_name: 'test'
+       id: '1'
+       ip: '117.24.56.0/24'
+    - name: edit a non-existent entry
+      fadcos_system_snmp_user_child_host:
+       action: edit
+       snmp_name: 'test'
+       id: '9999'
+       ip: '172.23.140.0/24'
+    - name: check the result of edit
+      fadcos_system_snmp_user_child_host:
+       action: get
+       snmp_name: 'test'
+    - name: remove
+      fadcos_system_snmp_user_child_host:
+       action: remove
+       snmp_name: 'test'
+       id_list:
+            - '1'
+            - '2'
+            - '3'
+            - '2675'
+            - '9999'
+

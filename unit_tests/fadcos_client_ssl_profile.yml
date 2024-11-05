@@ -1,0 +1,46 @@
+---
+- name:
+  hosts: all
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Add Client SSL Profile for test
+      fadcos_client_ssl_profile:
+        action: add
+        name: test_client_ssl_profile
+        ssl_allowed_versions: tlsv1.1
+    - name: Add duplicated Client SSL Profile for test
+      fadcos_client_ssl_profile:
+        action: add
+        name: test_client_ssl_profile
+        ssl_allowed_versions: tlsv1.2
+    - name: Test added Client SSL Profile
+      fadcos_client_ssl_profile:
+        action: get
+        name: test_client_ssl_profile
+    - name: Edit Client SSL Profile for test
+      fadcos_client_ssl_profile:
+        action: edit
+        name: test_client_ssl_profile
+        ssl_allowed_versions: tlsv1.3
+    - name: Test edited Client SSL Profile
+      fadcos_client_ssl_profile:
+        action: get
+        name: test_client_ssl_profile
+    - name: Edit non-existent Client SSL Profile for test
+      fadcos_client_ssl_profile:
+        action: edit
+        name: test_client_ssl_profile_nothere
+        ssl_allowed_versions: tlsv1.3
+    - name: delete Client SSL Profile
+      fadcos_client_ssl_profile:
+        action: delete
+        name: test_client_ssl_profile
+    - name: Test deleted Client SSL Profile
+      fadcos_client_ssl_profile:
+        action: get
+        name: test_client_ssl_profile
+    - name: delete Client SSL Profile again for idempotence test
+      fadcos_client_ssl_profile:
+        action: delete
+        name: test_client_ssl_profile

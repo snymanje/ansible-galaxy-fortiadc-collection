@@ -1,0 +1,26 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: edit
+      fadcos_system_snmp_sysinfo:
+       action: edit
+       contact: test1
+       description: test1
+       location: test1
+       status: enable
+
+    - name: edit
+      fadcos_system_snmp_sysinfo:
+       action: edit
+       contact: test9999
+       description: test9999
+       location: test9999
+       status: enable
+
+    - name: get
+      fadcos_system_snmp_sysinfo:
+       action: get

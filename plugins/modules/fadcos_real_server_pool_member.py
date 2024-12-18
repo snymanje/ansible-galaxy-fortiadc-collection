@@ -86,7 +86,7 @@ def add_rs_pool_member(module, connection):
 
     url = '/api/load_balance_pool_child_pool_member?pkey=' + pkey
     if is_vdom_enable(connection):
-        url += '?vdom=' + vdom
+        url += '&vdom=' + vdom
 
     code, response = connection.send_request(url, payload)
 
